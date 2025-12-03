@@ -1,6 +1,7 @@
 services:
   db:
     image: mariadb:10.11
+    restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ROOT
       MYSQL_DATABASE: pimcore
@@ -11,9 +12,11 @@ services:
 
   redis:
     image: redis:alpine
+    restart: unless-stopped
 
   php:
     image: pimcore/pimcore:php8.1-latest
+    restart: unless-stopped
     working_dir: /var/www/html
     volumes:
       - pimcore-app:/var/www/html
@@ -25,6 +28,7 @@ services:
 
   nginx:
     image: nginx:alpine
+    restart: unless-stopped
     ports:
       - "80:80"
     volumes:
