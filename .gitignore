@@ -9,6 +9,7 @@
 /public/bundles/
 
 # local config
+/.env
 /.env.local
 /.env.local.php
 /.env.*.local
@@ -16,6 +17,7 @@
 /config/local/*
 !config/local/.gitkeep
 
+# var directory (cache, logs, temp files)
 /var/*
 !/var/.gitkeep
 !/var/classes/
@@ -24,12 +26,18 @@
 !/var/config
 /var/config/system.yml
 /var/config/maintenance.php
+/var/config/web-to-print/*
+!/var/config/web-to-print/.gitkeep
 
 # project specific recommendations
 /var/config/tag-manager.php
 /var/config/reports.php
 
+# cache directory
+/cache/*
+!/cache/.gitkeep
 
+# public var directory
 /public/var/
 /public/sitemap*.xml
 
@@ -39,11 +47,48 @@
 
 # composer
 /vendor/
+composer.lock
+/vendor/composer/tmp-*.zip*
 
+# IDE and editors
 # PhpStorm / IDEA
-.idea
+.idea/
+.idea/*
 # NetBeans
-nbproject
+nbproject/
+# VSCode
+.vscode/
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+# Vim
+*.swp
+*.swo
+*~
+# macOS
+.DS_Store
+
+# Testing
+/tests/_output/*
+!/tests/_output/.gitkeep
+.phpunit.result.cache
+/codeception.phar
+
+# Node modules (if using frontend tools)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json
 
 # temp
 .temp
+*.tmp
+*.bak
+*.backup
+*.old
+
+# Logs
+*.log
+
+# Google API credentials
+/config/pimcore/google-api-private-key.json
