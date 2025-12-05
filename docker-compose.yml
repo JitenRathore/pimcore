@@ -9,22 +9,45 @@ services:
       MYSQL_PASSWORD: pimcore
     volumes:
       - db-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   redis:
     image: redis:alpine
     restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
   php:
     image: pimcore/pimcore:php8.1-latest
     restart: unless-stopped
     working_dir: /var/www/html
+    user: root
     volumes:
       - pimcore-app:/var/www/html
+      - ./.docker/php-entrypoint.sh:/usr/local/bin/custom-entrypoint.sh:ro
     depends_on:
-      - db
-      - redis
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
       PHP_IDE_CONFIG: serverName=localhost
+      COMPOSER_ALLOW_SUPERUSER: 1
+    entrypoint: ["/bin/sh", "/usr/local/bin/custom-entrypoint.sh"]
+    healthcheck:
+      test: ["CMD-SHELL", "pidof php-fpm || exit 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 300s
 
   nginx:
     image: nginx:alpine
@@ -35,7 +58,13 @@ services:
       - pimcore-app:/var/www/html:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
     depends_on:
-      - php
+      php:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
 
 volumes:
   db-data:
