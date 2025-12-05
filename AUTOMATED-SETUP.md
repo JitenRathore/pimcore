@@ -4,20 +4,37 @@ This setup automatically installs Pimcore 11 when you start the containers for t
 
 ✅ **Tested & Verified**: Complete automation from blank slate to running application - zero manual steps required!
 
-## Quick Start
+## ⚠️ Important: Choose Your Scenario
 
-### Fresh Installation
+### Scenario 1: Fresh Installation (NO existing data)
+
+Use this for **first-time setup** or **development environments**:
 
 ```bash
-# Start containers (will auto-install Pimcore)
-docker compose up -d
+# This will create fresh volumes and install Pimcore from scratch
+docker compose down -v  # Delete old data (if any)
+docker compose up -d    # Auto-install
 
-# Wait for installation to complete (takes 5-10 minutes)
+# Wait 5-10 minutes, monitor with:
 docker compose logs -f php
 
-# Once you see "✓ Pimcore installed successfully" and "Starting PHP-FPM", access:
-# http://localhost/admin (login: admin/admin)
+# Access: http://localhost/admin (login: admin/admin)
 ```
+
+### Scenario 2: Production Deployment (WITH existing data)
+
+Use this for **updating production** with existing database and files:
+
+```bash
+# ✅ SAFE - Preserves all data in volumes
+git pull origin main
+docker compose down      # Stop containers, keep volumes
+docker compose up -d     # Start with updated code
+
+# Your data is SAFE! ✅
+```
+
+**📖 See [DEPLOYMENT.md](DEPLOYMENT.md) for detailed production deployment guide.**
 
 ### What Happens Automatically
 
